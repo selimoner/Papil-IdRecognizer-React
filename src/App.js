@@ -1,15 +1,17 @@
 import React from "react";
-import PhotoUploader from "./Components/PhotoUploader";
+import IdProcessor from "./Components/IdProcessor";
 import Navbar from "./Components/Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./Styles/App.css"
 
 function App() {
   return (
     <div className="container">
       <br />
       <Navbar title="Papilon"></Navbar>
-      <br />
-      <PhotoUploader />
+      <div>
+        <IdProcessor></IdProcessor>
+      </div>
     </div>
   );
 }

@@ -5,17 +5,19 @@ const Navbar = (props) => {
     const title = props.title;
     return (
         <div>
-            <h3>{title}</h3>
+            <div>
+                <h2>{title}</h2>
+            </div>
         </div>
     );
 };
 
 Navbar.propTypes = {
-    title: PropTypes.string.isRequired
-}
+    title: PropTypes.string.isRequired,
+};
 
 Navbar.defaultProps = {
-    title: "Default App (No Title)"
-}
+    title: "Default App (No Title)",
+};
 
 export default Navbar;

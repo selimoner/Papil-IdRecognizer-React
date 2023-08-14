@@ -1,0 +1,18 @@
+/* App.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Arial", sans-serif;
+    background-color: #b4e4b4;
+    /* Light green background */
+}
+
+.container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    /* White container background */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

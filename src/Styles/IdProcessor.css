@@ -1,3 +1,7 @@
+body {
+    background-color: rgb(rgb(29, 218, 32), green, rgb(115, 243, 96));
+}
+
 .photo-uploader-container {
     display: flex;
     align-items: center;
@@ -68,6 +72,7 @@
     padding: 15px;
     margin-top: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
 }
 
 .coordinates-section h3 {
