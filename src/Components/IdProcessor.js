@@ -73,6 +73,9 @@ function IdProcessor() {
     const goBack = () => {
         setCroppedImageURL(null);
         setCurrentPhoto(firstPhoto);
+        setSelectedKey(null)
+        setConfigFields(config)
+        setIsCropped(false)
     }
 
     const handlePhotoChange = (e) => {

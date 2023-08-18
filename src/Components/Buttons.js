@@ -45,10 +45,6 @@ const Buttons = (props) => {
                 &nbsp;&nbsp;
                 <button onClick={clearCanvas} className="btn mt-1" style={{ background: "yellow" }}>Reset Canvas</button>
                 &nbsp;&nbsp;
-                <button className="btn btn-success mt-1">
-                    Get JSON info
-                </button>
-                &nbsp;&nbsp;
                 {isSetCropped && isInfoSaved && (
                     <button onClick={getRef} className="btn btn-primary mt-1">Get Ref</button>
                 )}
