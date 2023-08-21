@@ -94,16 +94,13 @@ function IdProcessor() {
 
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
-
         if (file && file.type.includes("image/") && !isPhotoUploaded) {
             const reader = new FileReader();
-
             reader.onload = () => {
                 setCurrentPhoto(reader.result);
                 setFirstPhoto(reader.result)
                 setIsPhotoUploaded(true);
             };
-
             reader.readAsDataURL(file);
             setSelectedKey(null);
             setCardCoordinates(defaultFields);
@@ -118,6 +115,10 @@ function IdProcessor() {
         setRectangleCoords(null);
         fileInputRef.current.value = null;
         setCardCoordinates(defaultFields);
+        setIsSetCropped(false)
+        setInfoSaved(false)
+        setIsCropped(false)
+        setConfigFields(config)
     };
 
     const handleMouseDown = (e) => {
@@ -158,7 +159,7 @@ function IdProcessor() {
             x1: rectStartPosition.current.x,
             y1: rectStartPosition.current.y,
             x2: e.nativeEvent.offsetX,
-            y2: e.nativeEvent.offsetY,
+            y2: e.nativeEvent.offsetY - 10,
         });
         const x1y1 = `x1,y1 (${rectStartPosition.current.x}, ${rectStartPosition.current.y})`;
         const x1y2 = `x1,y2 (${rectStartPosition.current.x}, ${e.nativeEvent.offsetY})`;
@@ -209,7 +210,6 @@ function IdProcessor() {
 
     const handleGetCoordinates = () => {
         if (!rectangleCoords) return;
-
         let { x1, y1, x2, y2 } = rectangleCoords;
         if (x2 < x1) {
             let temp = x1;
@@ -234,6 +234,7 @@ function IdProcessor() {
         let ocr_type = null
         let ocr_type_zero = ocr_type_template[0]
         let ocrt_type_one = ocr_type_template[1]
+
         for (let i = 0; i < ocr_type_zero.length; i++) {
             if (ocr_type_zero[i] === selectedKey.toLowerCase()) {
                 ocr_type = 0;
@@ -249,6 +250,7 @@ function IdProcessor() {
         if (ocrt_type_one.includes(selectedKey)) {
             ocr_type = 1
         }
+
         let fieldName = selectedKey.toLowerCase()
         let fieldType = 0;
 
@@ -486,7 +488,7 @@ function IdProcessor() {
         setIsCropped(true);
         clearCanvas();
         setRectangleCoords(null);
-        setIsSetCropped(true)
+        setIsSetCropped(false)
     };
 
     const handleSetCropped = () => {
@@ -495,9 +497,9 @@ function IdProcessor() {
             setCroppedImageURL(null);
 
             setConfigFields(config)
-            setConfigFields((...prevConfig) => ({
-                [dictKey] : {
-
+            setConfigFields((prevConfig) => ({
+                [dictKey]: {
+                    ...prevConfig.iso_code
                 }
             }))
 
@@ -534,6 +536,7 @@ function IdProcessor() {
         setRectangleCoords(null);
         setShowConfig(true);
         setSelectedKey(null);
+        setIsGetRef(true)
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -584,6 +587,7 @@ function IdProcessor() {
         }
         setClickCounter(clickCounter + 1);
         setInfoSaved(true)
+        setIsSetCropped(true)
     }
 
     const noCropping = () => {
@@ -607,14 +611,17 @@ function IdProcessor() {
             y1 = y2;
             y2 = temp2;
         }
+
         let x = x1
         let y = y1
         let h = y2 - y1 + 10
         let w = x2 - x1
+
         setRefX(x)
         setRefY(y)
         setRefHeight(h)
         setRefWidth(w)
+
         config.iso_code.ref.h = h
         config.iso_code.ref.w = w
         config.iso_code.ref.x = x
@@ -670,6 +677,16 @@ function IdProcessor() {
                     ></FileInput>
                 </div>
                 <br />
+                {isCropped && (
+                    <div>
+                        <InfoSelector
+                            saveInfo={saveInfo}
+                            dictKey={dictKey}
+                        ></InfoSelector>
+                        <br />
+                    </div>
+                )}
+                <br />
                 {isPhotoUploaded && currentPhoto && (
                     <div className="col-sm" id="right-side">
 
@@ -703,15 +720,7 @@ function IdProcessor() {
                             ></CroppedImage>
                             <br />
                         </div>
-                        {isCropped && (
-                            <div>
-                                <InfoSelector
-                                    saveInfo={saveInfo}
-                                    dictKey={dictKey}
-                                ></InfoSelector>
-                                <br />
-                            </div>
-                        )}
+
                         <div className="rightSide">
                             <ShowConfig
                                 isShowConfig={isShowConfig}
