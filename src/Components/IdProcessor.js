@@ -10,7 +10,6 @@ import InfoSelector from "./InfoSelector";
 import ShowConfig from "./ShowConfig";
 import ocr_type_template from "../OcrTemplate";
 import config from "./Config.json"
-import { json } from "react-router-dom";
 
 function IdProcessor() {
 
@@ -47,8 +46,11 @@ function IdProcessor() {
     // eslint-disable-next-line no-unused-vars
     const [refWidth, setRefWidth] = useState(0)
     const [counter, setCounter] = useState(0)
+    // eslint-disable-next-line no-unused-vars
     const [regex, setRegex] = useState("")
+    // eslint-disable-next-line no-unused-vars
     const [existingNames, setExistingNames] = useState({})
+    // eslint-disable-next-line no-unused-vars
     const [refImageURL, setRefImageURL] = useState(null);
     const [isGetRef, setIsGetRef] = useState(false)
 
@@ -203,7 +205,6 @@ function IdProcessor() {
         }
     }
 
-
     const handleGetCoordinates = () => {
         if (!rectangleCoords) return;
 
@@ -227,26 +228,6 @@ function IdProcessor() {
         let y = y1
         let h = y2 - y1
         let w = x2 - x1
-
-
-
-
-        /*const myNames = {}
-
-        for (const topLevelKey in configFields) {
-            if (topLevelKey === "fields" && configFields[topLevelKey]) {
-                for (const subKey in configFields[topLevelKey]) {
-                    if (configFields[topLevelKey][subKey].name) {
-                        myNames[subKey] = subKey.name
-                    }
-                }
-            }
-        }
-        console.log(myNames)*/
-
-
-
-
 
         let ocr_type = null
         let ocr_type_zero = ocr_type_template[0]
@@ -442,8 +423,6 @@ function IdProcessor() {
                 }))
             }
         }
-
-        console.log(existingNames)
     };
 
     const clearCanvas = () => {
@@ -524,11 +503,10 @@ function IdProcessor() {
 
             var dataurl = croppedImageURL
 
-            var a = document.createElement("a"); //Create <a>
-            a.href = dataurl; //Image Base64 Goes here
-            a.download = "Image.png"; //File name Here
-            a.click(); //Downloaded file
-
+            var a = document.createElement("a");
+            a.href = dataurl;
+            a.download = dictKey + "_initial.png";
+            a.click();
         }
         else if (!isCropped) {
             alert("You didn't cropped anything!")
@@ -663,10 +641,10 @@ function IdProcessor() {
 
         setRefImageURL(refImageURL);
 
-        var a = document.createElement("a"); //Create <a>
-        a.href = refImageURL; //Image Base64 Goes here
-        a.download = "ref.png"; //File name Here
-        a.click(); //Downloaded file
+        var a = document.createElement("a");
+        a.href = refImageURL;
+        a.download = dictKey + ".png";
+        a.click();
 
         clearCanvas()
     }

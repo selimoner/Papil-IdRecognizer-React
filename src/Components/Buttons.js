@@ -13,7 +13,6 @@ const Buttons = (props) => {
     const clearCanvas = props.clearCanvas
     const getRef = props.getRef;
     const isSetCropped = props.isSetCropped
-    const isInfoSaved = props.isInfoSaved
     const isGetRef = props.isGetRef
 
     function isClicked() {
