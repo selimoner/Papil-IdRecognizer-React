@@ -54,6 +54,8 @@ function IdProcessor() {
     const [refImageURL, setRefImageURL] = useState(null);
     const [isGetRef, setIsGetRef] = useState(false)
 
+    let key = ""
+
     useEffect(() => {
         let screenWidth = window.screen.availWidth;
         let screenHeight = window.screen.availHeight;
@@ -456,7 +458,7 @@ function IdProcessor() {
         setInitialWidth(w);
 
         const rectWidth = x2 - x1;
-        const rectHeight = y2 - y1 + 10;
+        const rectHeight = y2 - y1;
 
         const canvas = canvasRef.current;
 
@@ -493,6 +495,11 @@ function IdProcessor() {
             setCroppedImageURL(null);
 
             setConfigFields(config)
+            setConfigFields((...prevConfig) => ({
+                [dictKey] : {
+
+                }
+            }))
 
             config.iso_code.initial.h = initialHeight
             config.iso_code.initial.w = initialWidth
@@ -565,7 +572,7 @@ function IdProcessor() {
                 setSelectedKey(null);
             }
         }
-        let key = isoNumber + '_' + cardType + '_' + side
+        key = isoNumber + '_' + cardType + '_' + side
 
         setDictKey(key);
         if (clickCounter === 0) {
@@ -602,7 +609,7 @@ function IdProcessor() {
         }
         let x = x1
         let y = y1
-        let h = y2 - y1
+        let h = y2 - y1 + 10
         let w = x2 - x1
         setRefX(x)
         setRefY(y)
