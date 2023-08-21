@@ -7,6 +7,7 @@ const FileInput = (props) => {
     const isPhotoUploaded = props.isPhotoUploaded
     const handleClearClick = props.handleClearClick
     const currentPhoto = props.currentPhoto
+    const noCropping = props.noCropping
 
     return (
         <div className="col-sm" id="left-side">
@@ -19,11 +20,12 @@ const FileInput = (props) => {
             />
             {currentPhoto && (
                 <div className="uploaded-photo">
-
-                    <button className="btn btn-danger" onClick={handleClearClick}>
+                    <button className="btn btn-danger mt-1" onClick={handleClearClick}>
                         Clear
                     </button>
-                    <br /><br />
+                    &nbsp;&nbsp;
+                    <button className="btn btn-success mt-1" onClick={noCropping}>No Need Crop</button>
+                    <br />
                 </div>
             )}
         </div>

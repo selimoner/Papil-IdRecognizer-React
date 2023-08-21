@@ -1,16 +1,4 @@
 const defaultFields = {
-    card: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
-    },
-    idNumber: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
-    },
     name: {
         x1: 0,
         y1: 0,
@@ -23,42 +11,24 @@ const defaultFields = {
         x2: 0,
         y2: 0,
     },
-    dateOfBirth: {
+    birth_date: {
         x1: 0,
         y1: 0,
         x2: 0,
         y2: 0,
     },
-    documentNo: {
+    identity_number: {
         x1: 0,
         y1: 0,
         x2: 0,
         y2: 0,
     },
-    validUntil: {
+    expiry_date: {
         x1: 0,
         y1: 0,
         x2: 0,
         y2: 0,
-    },
-    gender: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
-    },
-    nationality: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
-    },
-    signature: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
-    },
+    }
 };
 
 export default defaultFields;

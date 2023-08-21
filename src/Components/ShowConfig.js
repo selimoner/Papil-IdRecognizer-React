@@ -2,7 +2,6 @@ import React from "react";
 import "../Styles/IdProcessor.css"
 
 const ShowConfig = (props) => {
-    const isShowConfig = props.isShowConfig
     const config = props.config
 
     return (

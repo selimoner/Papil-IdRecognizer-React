@@ -7,12 +7,15 @@ import Buttons from "./Buttons";
 import CroppedImage from "./CroppedImage";
 import defaultFields from "./CardFields";
 import InfoSelector from "./InfoSelector";
-import config from "./Config";
 import ShowConfig from "./ShowConfig";
+import ocr_type_template from "../OcrTemplate";
+import config from "./Config.json"
+import { json } from "react-router-dom";
 
 function IdProcessor() {
 
     const croppedImage = new Image();
+    const refImage = new Image();
     const [currentPhoto, setCurrentPhoto] = useState(null);
     const [isPhotoUploaded, setIsPhotoUploaded] = useState(false);
     const [isCropped, setIsCropped] = useState(false);
@@ -34,13 +37,20 @@ function IdProcessor() {
     const contextRef = useRef(null);
     const isDrawing = useRef(false);
     const rectStartPosition = useRef({ x: 0, y: 0 });
-    const [showCoordinates, setShowCoordinates] = useState(false);
     const [isShowConfig, setShowConfig] = useState(false);
+    // eslint-disable-next-line no-unused-vars
     const [refX, setRefX] = useState(0)
+    // eslint-disable-next-line no-unused-vars
     const [refY, setRefY] = useState(0)
+    // eslint-disable-next-line no-unused-vars
     const [refHeight, setRefHeight] = useState(0)
+    // eslint-disable-next-line no-unused-vars
     const [refWidth, setRefWidth] = useState(0)
     const [counter, setCounter] = useState(0)
+    const [regex, setRegex] = useState("")
+    const [existingNames, setExistingNames] = useState({})
+    const [refImageURL, setRefImageURL] = useState(null);
+    const [isGetRef, setIsGetRef] = useState(false)
 
     useEffect(() => {
         let screenWidth = window.screen.availWidth;
@@ -74,8 +84,8 @@ function IdProcessor() {
         setCroppedImageURL(null);
         setCurrentPhoto(firstPhoto);
         setSelectedKey(null)
-        setConfigFields(config)
         setIsCropped(false)
+        setConfigFields(config)
     }
 
     const handlePhotoChange = (e) => {
@@ -193,8 +203,10 @@ function IdProcessor() {
         }
     }
 
+
     const handleGetCoordinates = () => {
         if (!rectangleCoords) return;
+
         let { x1, y1, x2, y2 } = rectangleCoords;
         if (x2 < x1) {
             let temp = x1;
@@ -216,8 +228,45 @@ function IdProcessor() {
         let h = y2 - y1
         let w = x2 - x1
 
+
+
+
+        /*const myNames = {}
+
+        for (const topLevelKey in configFields) {
+            if (topLevelKey === "fields" && configFields[topLevelKey]) {
+                for (const subKey in configFields[topLevelKey]) {
+                    if (configFields[topLevelKey][subKey].name) {
+                        myNames[subKey] = subKey.name
+                    }
+                }
+            }
+        }
+        console.log(myNames)*/
+
+
+
+
+
+        let ocr_type = null
+        let ocr_type_zero = ocr_type_template[0]
+        let ocrt_type_one = ocr_type_template[1]
+        for (let i = 0; i < ocr_type_zero.length; i++) {
+            if (ocr_type_zero[i] === selectedKey.toLowerCase()) {
+                ocr_type = 0;
+            }
+        }
+
+        for (let i = 0; i < ocrt_type_one; i++) {
+            if (ocrt_type_one[i] === selectedKey.toLowerCase()) {
+                ocr_type = 1;
+            }
+        }
+
+        if (ocrt_type_one.includes(selectedKey)) {
+            ocr_type = 1
+        }
         let fieldName = selectedKey.toLowerCase()
-        console.log(fieldName)
         let fieldType = 0;
 
         if (!fieldName === "mrz" && !fieldName === "signature" && !fieldName === "image") {
@@ -232,23 +281,20 @@ function IdProcessor() {
         else if (fieldName === "signature" || fieldName === "sign" || fieldName === "imza") {
             fieldType = 3
         }
-        console.log("Field Type : " + fieldType)
-        console.log(fieldName)
+
+        setConfigFields((prevConfig) => ({
+            [dictKey]: {
+                ...prevConfig[dictKey]
+
+            }
+        }))
 
         if (rectangleCoords && selectedKey && handleButtonClick) {
-            setCardCoordinates((prevCoordinates) => ({
-                ...prevCoordinates,
-                [selectedKey]: {
-                    ...prevCoordinates[selectedKey],
-                    ...rectangleCoords,
-                },
-            }));
-
-            setConfigFields((prevConfig) => ({
+            /*setConfigFields((prevConfig) => ({
                 [dictKey]: {
                     ...prevConfig[dictKey],
-                    ["fields"]: {
-                        ...prevConfig[dictKey]["fields"],
+                    fields: {
+                        ...prevConfig[dictKey],
                         [counter]: {
                             name: selectedKey,
                             type: fieldType,
@@ -261,9 +307,143 @@ function IdProcessor() {
                         }
                     }
                 }
-            }))
+            }))*/
+
+            if (!(selectedKey in existingNames)) {
+                if (ocr_type === null) {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    name: selectedKey,
+                                    type: fieldType,
+                                    points: {
+                                        x: x,
+                                        y: y,
+                                        h: h,
+                                        w: w
+                                    },
+                                }
+                            }
+                        }
+                    }))
+                    setCounter(counter + 1)
+                }
+                else {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    name: selectedKey,
+                                    type: fieldType,
+                                    points: {
+                                        x: x,
+                                        y: y,
+                                        h: h,
+                                        w: w
+                                    },
+                                    ocr_type: ocr_type
+                                }
+                            }
+                        }
+                    }))
+                    setCounter(counter + 1)
+                }
+            }
+
+            else if (selectedKey in existingNames) {
+                if (ocr_type === null) {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    name: selectedKey,
+                                    type: fieldType,
+                                    points: {
+                                        x: x,
+                                        y: y,
+                                        h: h,
+                                        w: w
+                                    },
+                                }
+                            }
+                        }
+                    }))
+                    setCounter(counter + 1)
+                }
+                else {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    name: selectedKey,
+                                    type: fieldType,
+                                    points: {
+                                        x: x,
+                                        y: y,
+                                        h: h,
+                                        w: w
+                                    },
+                                    ocr_type: ocr_type
+                                }
+                            }
+                        }
+                    }))
+                    setCounter(counter + 1)
+                }
+            }
+            else {
+                alert("unidentified error!")
+                return
+            }
+
+            let regexField = document.getElementById("regexField")
+            let regexKey = ""
+            if (regexField) {
+                regexKey = regexField.value
+            }
+            if (regexKey === null) {
+                regexKey = ""
+            }
+            if (!regexKey) {
+                regexKey = ""
+            }
+            else if (typeof regexKey === "string" && regexKey.includes(" ")) {
+                alert("Regex value can not have space value!")
+            }
+            else if (regexKey) {
+                setRegex(regexKey)
+            }
+            else {
+                alert("Unidentified Problem!")
+                return
+            }
+
+            if (regexKey) {
+                setConfigFields((prevConfig) => ({
+                    [dictKey]: {
+                        ...prevConfig[dictKey],
+                        fields: {
+                            ...prevConfig[dictKey]["fields"],
+                            [counter]: {
+                                ...prevConfig[dictKey]["fields"][counter],
+                                regex: regexKey
+                            }
+                        }
+                    }
+                }))
+            }
         }
-        setCounter(counter + 1)
+
+        console.log(existingNames)
     };
 
     const clearCanvas = () => {
@@ -325,21 +505,33 @@ function IdProcessor() {
         setIsCropped(true);
         clearCanvas();
         setRectangleCoords(null);
+        setIsSetCropped(true)
     };
 
     const handleSetCropped = () => {
         if (isPhotoUploaded && isCropped) {
             setCurrentPhoto(croppedImageURL)
             setCroppedImageURL(null);
-            setCardCoordinates(defaultFields)
+
+            setConfigFields(config)
 
             config.iso_code.initial.h = initialHeight
             config.iso_code.initial.w = initialWidth
 
-            if (!isSetCropped) {
-                setIsSetCropped(true);
-            }
-            setIsCropped(false);
+            setIsCropped(true);
+            setIsSetCropped(false)
+            setIsGetRef(true);
+
+            var dataurl = croppedImageURL
+
+            /*var fs = require('fs');
+            // string generated by canvas.toDataURL()
+            var img = dataurl;
+            // strip off the data: url prefix to get just the base64-encoded bytes
+            var data = img.replace(/^data:image\/\w+;base64,/, "");
+            var buf = new Buffer(data, 'base64');
+            fs.writeFile('D:\\staj\\images', buf);*/
+
         }
         else if (!isCropped) {
             alert("You didn't cropped anything!")
@@ -358,12 +550,10 @@ function IdProcessor() {
         setButtonClicked(true);
         handleGetCoordinates();
         setRectangleCoords(null);
-        setShowCoordinates(true);
         setShowConfig(true);
         setSelectedKey(null);
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
-        canvas.willReadFrequently = true;
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.putImageData(contextRef.current, 0, 0);
     };
@@ -414,6 +604,11 @@ function IdProcessor() {
         setInfoSaved(true)
     }
 
+    const noCropping = () => {
+        setIsCropped(true);
+        setIsSetCropped(true)
+    }
+
     const getRef = () => {
         if (!rectangleCoords) {
             alert("You didn't draw anything on the image!")
@@ -442,6 +637,36 @@ function IdProcessor() {
         config.iso_code.ref.w = w
         config.iso_code.ref.x = x
         config.iso_code.ref.y = y
+
+
+        const rectWidth = x2 - x1;
+        const rectHeight = y2 - y1 + 10;
+
+        const canvas = canvasRef.current;
+
+        const croppedCanvas = document.createElement('canvas');
+        const croppedContext = croppedCanvas.getContext('2d');
+        canvas.willReadFrequently = true;
+
+        croppedCanvas.width = rectWidth;
+        croppedCanvas.height = rectHeight;
+        const clearContext = canvas.getContext("2d");
+        clearContext.clearRect(0, 0, canvas.width, canvas.height);
+        clearContext.putImageData(contextRef.current, 0, 0);
+
+        croppedContext.drawImage(
+            canvas,
+            x1, y1, rectWidth, rectHeight,
+            0, 0, rectWidth, rectHeight
+        );
+
+        const refImageURL = croppedCanvas.toDataURL();
+
+        refImage.src = refImageURL;
+
+        setRefImageURL(refImageURL);
+
+        clearCanvas()
     }
 
     return (
@@ -454,18 +679,13 @@ function IdProcessor() {
                         isPhotoUploaded={isPhotoUploaded}
                         handleClearClick={handleClearClick}
                         currentPhoto={currentPhoto}
+                        noCropping={noCropping}
                     ></FileInput>
                 </div>
                 <br />
                 {isPhotoUploaded && currentPhoto && (
                     <div className="col-sm" id="right-side">
-                        <div>
-                            <InfoSelector
-                                saveInfo={saveInfo}
-                                dictKey={dictKey}
-                            ></InfoSelector>
-                            <br />
-                        </div>
+
                         <div id="drawDiv">
                             <Canvas
                                 canvasRef={canvasRef}
@@ -486,6 +706,7 @@ function IdProcessor() {
                             getRef={getRef}
                             isSetCropped={isSetCropped}
                             isInfoSaved={isInfoSaved}
+                            isGetRef={isGetRef}
                         ></Buttons>
                         <br />
                         <div className="rightSide">
@@ -495,6 +716,15 @@ function IdProcessor() {
                             ></CroppedImage>
                             <br />
                         </div>
+                        {isCropped && (
+                            <div>
+                                <InfoSelector
+                                    saveInfo={saveInfo}
+                                    dictKey={dictKey}
+                                ></InfoSelector>
+                                <br />
+                            </div>
+                        )}
                         <div className="rightSide">
                             <ShowConfig
                                 isShowConfig={isShowConfig}

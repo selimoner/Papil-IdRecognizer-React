@@ -15,6 +15,10 @@ const InfoSelector = (props) => {
         <div className="rightSide">
             <h4 style={{ textAlign: "center" }}>Key Generator</h4>
             <div>
+                {dictKey && (
+                    <h5>Generated Key : {dictKey}</h5>
+                )}
+                <br />
                 <label htmlFor="isoNumber">Enter Iso Number:</label>&nbsp;&nbsp;
                 <input
                     id="isoNumber"
@@ -76,7 +80,7 @@ const InfoSelector = (props) => {
             <br />
             <button type="button" className="btn btn-primary" onClick={saveInfo}>
                 Save
-            </button> <h5>Generated Key : {dictKey}</h5>
+            </button>
         </div>
     );
 };

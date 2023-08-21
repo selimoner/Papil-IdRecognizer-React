@@ -1,12 +1,16 @@
-import React from "react";
-import "../Styles/IdProcessor.css"
+import React, { useState } from "react";
+import "../Styles/IdProcessor.css";
 
 const CheckboxField = (props) => {
+    const cardCoordinates = props.cardCoordinates;
+    const selectedKey = props.selectedKey;
+    const handleCheckboxChange = props.handleCheckboxChange;
+    const addCheckbox = props.addCheckbox;
+    const [showRegex, setShowRegex] = useState(false);
 
-    const cardCoordinates = props.cardCoordinates
-    const selectedKey = props.selectedKey
-    const handleCheckboxChange = props.handleCheckboxChange
-    const addCheckbox = props.addCheckbox
+    const handleRegexCheckboxChange = (event) => {
+        setShowRegex(event.target.checked);
+    };
 
     return (
         <div id="checkBoxDiv">
@@ -19,20 +23,47 @@ const CheckboxField = (props) => {
                             checked={selectedKey === key}
                             onChange={() => handleCheckboxChange(key)}
                         />&nbsp;&nbsp;
-                        {key}</label>
+                        {key}
+                    </label>
                 </div>
             ))}
             <br /><br />
             <div>
-                <label htmlFor="fieldText" className="form-check-label">Field : </label>&nbsp;&nbsp;
-                <input type="text" id="fieldText" placeholder="Enter Field Name" />
-                <br />
-                <button className="btn btn-primary mt-3" onClick={addCheckbox}>Add Field</button>
+                <label htmlFor="fieldText" className="form-check-label">
+                    Field :
+                </label>&nbsp;&nbsp;
+                <input type="text" id="fieldText" placeholder="Enter Field Name" />&nbsp;&nbsp;
+                <button className="btn btn-primary mt-1" onClick={addCheckbox}>
+                    Add Field
+                </button>
             </div>
-
+            <div>
+                <br />
+                <label className="form-check-label" htmlFor="showRegex">
+                    Regex :
+                </label>&nbsp;&nbsp;
+                <input
+                    type="checkbox"
+                    id="showRegex"
+                    onChange={handleRegexCheckboxChange}
+                />
+                {showRegex && (
+                    <div>
+                        <label className="form-check-label" htmlFor="regexField">
+                            Enter Regex :
+                        </label>&nbsp;&nbsp;
+                        <input
+                            type="text"
+                            id="regexField"
+                            required
+                            placeholder="Enter Regex"
+                        />&nbsp;&nbsp;
+                    </div>
+                )}
+            </div>
             <br />
         </div>
-    )
-}
+    );
+};
 
-export default CheckboxField
+export default CheckboxField;

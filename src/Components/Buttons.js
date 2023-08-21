@@ -14,6 +14,7 @@ const Buttons = (props) => {
     const getRef = props.getRef;
     const isSetCropped = props.isSetCropped
     const isInfoSaved = props.isInfoSaved
+    const isGetRef = props.isGetRef
 
     function isClicked() {
         setIsClicked(true);
@@ -35,7 +36,7 @@ const Buttons = (props) => {
                     Crop Photo
                 </button>
                 &nbsp;&nbsp;
-                {isCropped && isCroppedClicked && (
+                {isCropped && isCroppedClicked && isSetCropped && (
                     <button className="btn btn-info mt-1" onClick={handleSetCropped}>
                         Set Cropped Photo
                     </button>
@@ -45,7 +46,7 @@ const Buttons = (props) => {
                 &nbsp;&nbsp;
                 <button onClick={clearCanvas} className="btn mt-1" style={{ background: "yellow" }}>Reset Canvas</button>
                 &nbsp;&nbsp;
-                {isSetCropped && isInfoSaved && (
+                {isGetRef && (
                     <button onClick={getRef} className="btn btn-primary mt-1">Get Ref</button>
                 )}
 
