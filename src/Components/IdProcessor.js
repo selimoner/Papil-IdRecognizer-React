@@ -119,6 +119,8 @@ function IdProcessor() {
         setInfoSaved(false)
         setIsCropped(false)
         setConfigFields(config)
+        setShowConfig(false)
+        clearCanvas()
     };
 
     const handleMouseDown = (e) => {
@@ -149,17 +151,17 @@ function IdProcessor() {
         const rectHeight = e.nativeEvent.offsetY - rectStartPosition.current.y;
 
         context.strokeRect(
-            rectStartPosition.current.x + 5,
-            rectStartPosition.current.y + 5,
-            rectWidth - 10,
-            rectHeight + 5
+            rectStartPosition.current.x,
+            rectStartPosition.current.y,
+            rectWidth,
+            rectHeight
         );
 
         setRectangleCoords({
             x1: rectStartPosition.current.x,
             y1: rectStartPosition.current.y,
             x2: e.nativeEvent.offsetX,
-            y2: e.nativeEvent.offsetY - 10,
+            y2: e.nativeEvent.offsetY,
         });
         const x1y1 = `x1,y1 (${rectStartPosition.current.x}, ${rectStartPosition.current.y})`;
         const x1y2 = `x1,y2 (${rectStartPosition.current.x}, ${e.nativeEvent.offsetY})`;
@@ -509,6 +511,7 @@ function IdProcessor() {
             setIsCropped(true);
             setIsSetCropped(false)
             setIsGetRef(true);
+            setShowConfig(true)
 
             var dataurl = croppedImageURL
 
@@ -588,6 +591,7 @@ function IdProcessor() {
         setClickCounter(clickCounter + 1);
         setInfoSaved(true)
         setIsSetCropped(true)
+        setShowConfig(true)
     }
 
     const noCropping = () => {
@@ -614,7 +618,7 @@ function IdProcessor() {
 
         let x = x1
         let y = y1
-        let h = y2 - y1 + 10
+        let h = y2 - y1
         let w = x2 - x1
 
         setRefX(x)
@@ -629,7 +633,7 @@ function IdProcessor() {
 
 
         const rectWidth = x2 - x1;
-        const rectHeight = y2 - y1 + 10;
+        const rectHeight = y2 - y1;
 
         const canvas = canvasRef.current;
 
@@ -720,24 +724,26 @@ function IdProcessor() {
                             ></CroppedImage>
                             <br />
                         </div>
+                        {isShowConfig && (
+                            <div className="rightSide">
+                                <ShowConfig
+                                    isShowConfig={isShowConfig}
+                                    config={configFields}
+                                ></ShowConfig>
+                                {isInfoSaved && (
+                                    <div>
+                                        <CheckboxField
+                                            cardCoordinates={cardCoordinates}
+                                            selectedKey={selectedKey}
+                                            handleCheckboxChange={handleCheckboxChange}
+                                            addCheckbox={addCheckbox}
+                                        ></CheckboxField>
+                                        <br />
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
-                        <div className="rightSide">
-                            <ShowConfig
-                                isShowConfig={isShowConfig}
-                                config={configFields}
-                            ></ShowConfig>
-                            {isInfoSaved && (
-                                <div>
-                                    <CheckboxField
-                                        cardCoordinates={cardCoordinates}
-                                        selectedKey={selectedKey}
-                                        handleCheckboxChange={handleCheckboxChange}
-                                        addCheckbox={addCheckbox}
-                                    ></CheckboxField>
-                                    <br />
-                                </div>
-                            )}
-                        </div>
                     </div>
                 )}
                 <br />
