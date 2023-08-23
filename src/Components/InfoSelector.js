@@ -11,6 +11,8 @@ const InfoSelector = (props) => {
 
     const saveInfo = props.saveInfo;
     let dictKey = props.dictKey;
+    const changeKey = props.changeKey
+    let clickCounter = props.clickCounter
 
     return (
         <div className="rightSide">
@@ -71,7 +73,13 @@ const InfoSelector = (props) => {
             <br />
             <button type="button" className="btn btn-primary" onClick={saveInfo}>
                 Save
-            </button>
+            </button>&nbsp;&nbsp;
+            {clickCounter > 0 && (
+                <button type="button" className="btn btn-warning" onClick={changeKey}>
+                    Change Key
+                </button>
+            )}
+
         </div>
     );
 };

@@ -790,13 +790,18 @@ function IdProcessor() {
             alert("No photo availible!")
         }
     }
+    function getDictKey() {
+        return dictKey
+    }
 
     const handleCheckboxChange = (key) => {
         setSelectedKey(key === selectedKey ? "" : key);
+        let dictKey = getDictKey();
+        let keys = [];
 
-
-
-        let keys = Object.keys(configFields[dictKey]["fields"]);
+        if (configFields[dictKey] && configFields[dictKey]["fields"]) {
+            keys = Object.keys(configFields[dictKey]["fields"]);
+        }
         let values = [];
 
         for (let i = 0; i < keys.length; i++) {
@@ -944,6 +949,46 @@ function IdProcessor() {
         clearCanvas()
     }
 
+    const changeKey = () => {
+        if (clickCounter > 0) {
+            let isoNumber = document.getElementById("isoNumber").value;
+            let cardType = document.getElementById("cardTypeList").value;
+            let side = document.getElementById("sideList").value;
+
+            if (!isoNumber) {
+                alert("You didn't put any iso number!")
+                setInfoSaved(false)
+                setSelectedKey(null)
+                return
+
+            }
+            else if (!cardType) {
+                alert("You didn't select any card type!")
+                setInfoSaved(false)
+                setSelectedKey(null)
+                return
+            }
+            else if (!side) {
+                alert("You didn't select any side!")
+                setInfoSaved(false)
+                setSelectedKey(null)
+                return
+            }
+            key = isoNumber + '_' + cardType + '_' + side
+
+            let temp = configFields[dictKey]
+            setDictKey(key);
+
+            setConfigFields((prevConfig) => ({
+                [key]: {
+                    temp
+                }
+            }))
+
+
+        }
+    }
+
     return (
         <div className="container">
             <div id="photo-uploader" >
@@ -965,6 +1010,8 @@ function IdProcessor() {
                         <InfoSelector
                             saveInfo={saveInfo}
                             dictKey={dictKey}
+                            changeKey={changeKey}
+                            clickCounter={clickCounter}
                         ></InfoSelector>
                         <br />
                     </div>
