@@ -12,6 +12,7 @@
             "h": 0,
             "w": 0
         },
-        "fields": {}
+        "fields": {},
+        "threshold": 0.5
     }
 }

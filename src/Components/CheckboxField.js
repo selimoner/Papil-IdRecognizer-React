@@ -6,8 +6,13 @@ const CheckboxField = (props) => {
     const selectedKey = props.selectedKey;
     const handleCheckboxChange = props.handleCheckboxChange;
     const addCheckbox = props.addCheckbox;
+    const saveThreshold = props.saveThreshold
     const [showRegex, setShowRegex] = useState(false);
     const [showMrz, setShowMrz] = useState(false);
+    const [showOcr, setShowOcr] = useState(false);
+    const [showFieldType, setShowFieldType] = useState(false);
+    const [showFieldArea, setShowFieldArea] = useState(false)
+    const [showThreshold, setShowThreshold] = useState(false)
 
     const handleRegexCheckboxChange = (event) => {
         setShowRegex(event.target.checked);
@@ -16,6 +21,25 @@ const CheckboxField = (props) => {
     const handleMrzCheckboxChange = (event) => {
         setShowMrz(event.target.checked);
     };
+    const handleOcrCheckboxChange = (event) => {
+        setShowOcr(event.target.checked);
+    };
+    const handleFieldTypeCheckboxChange = (event) => {
+        setShowFieldType(event.target.checked);
+    };
+    const handleFieldAreaCheckboxChange = (event) => {
+        setShowFieldArea(event.target.checked);
+    };
+    const handleThresholdChange = (event) => {
+        setShowThreshold(event.target.checked);
+    };
+    const closeArea = () => {
+        setShowThreshold(false)
+        let checkbox = document.getElementById("showThreshold")
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+    }
 
     return (
         <div id="checkBoxDiv">
@@ -34,13 +58,27 @@ const CheckboxField = (props) => {
             ))}
             <br /><br />
             <div>
-                <label htmlFor="fieldText" className="form-check-label">
-                    Field :
+                <br />
+                <label className="form-check-label" htmlFor="showFieldArea">
+                    Field Area
                 </label>&nbsp;&nbsp;
-                <input type="text" id="fieldText" placeholder="Enter Field Name" />&nbsp;&nbsp;
-                <button className="btn btn-primary mt-1" onClick={addCheckbox}>
-                    Add Field
-                </button>
+                <input
+                    type="checkbox"
+                    id="showFieldArea"
+                    onChange={handleFieldAreaCheckboxChange}
+                />
+                {showFieldArea && (
+                    <div>
+                        <label htmlFor="fieldText" className="form-check-label">
+                            Enter Field :
+                        </label>&nbsp;&nbsp;
+                        <input type="text" id="fieldText" placeholder="Enter Field Name" />&nbsp;&nbsp;
+                        <button className="btn btn-primary" onClick={addCheckbox}>
+                            Add Field
+                        </button>
+                    </div>
+                )}
+
             </div>
             <div>
                 <br />
@@ -89,6 +127,85 @@ const CheckboxField = (props) => {
                             placeholder="Enter Mrz"
                         />&nbsp;&nbsp;
                     </div>
+                )}
+            </div>
+
+            <div>
+                <br />
+                <label className="form-check-label" htmlFor="showOcr">
+                    Ocr :
+                </label>&nbsp;&nbsp;
+                <input
+                    type="checkbox"
+                    id="showOcr"
+                    onChange={handleOcrCheckboxChange}
+                />
+                {showOcr && (
+                    <div>
+                        <label className="form-check-label" htmlFor="ocrField">
+                            Enter OCR Type :
+                        </label>&nbsp;&nbsp;
+                        <input
+                            type="number"
+                            id="ocrField"
+                            required
+                            placeholder="Enter Ocr Type"
+                        />&nbsp;&nbsp;
+                    </div>
+                )}
+            </div>
+
+            <div>
+                <br />
+                <label className="form-check-label" htmlFor="showFieldType">
+                    Field Type :
+                </label>&nbsp;&nbsp;
+                <input
+                    type="checkbox"
+                    id="showFieldType"
+                    onChange={handleFieldTypeCheckboxChange}
+                />
+                {showFieldType && (
+                    <div>
+                        <label className="form-check-label" htmlFor="fieldType">
+                            Enter Field Type :
+                        </label>&nbsp;&nbsp;
+                        <input
+                            type="number"
+                            id="fieldType"
+                            required
+                            placeholder="Enter Field Type"
+                        />&nbsp;&nbsp;
+                    </div>
+                )}
+            </div>
+
+            <div>
+                <br />
+                <label className="form-check-label" htmlFor="showThreshold">
+                    Threshold :
+                </label>&nbsp;&nbsp;
+                <input
+                    type="checkbox"
+                    id="showThreshold"
+                    onChange={handleThresholdChange}
+                />
+                {showThreshold && (
+                    <div>
+                        <label className="form-check-label" htmlFor="threshold">
+                            Enter Threshold value :
+                        </label>&nbsp;&nbsp;
+                        <input
+                            type="number"
+                            id="threshold"
+                            required
+                            placeholder="Enter Threshold Value"
+                        />&nbsp;&nbsp;
+                        <button className="btn btn-primary" onClick={() => { saveThreshold(); closeArea(); }}>
+                            Save Threshold
+                        </button>
+                    </div>
+
                 )}
             </div>
 

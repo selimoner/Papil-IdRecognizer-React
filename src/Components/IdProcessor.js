@@ -60,6 +60,12 @@ function IdProcessor() {
     const [getWidth, setWidth] = useState(0)
     const [isNoCropClicked, setNoCropClicked] = useState(false)
     const [checker, setChecker] = useState(false)
+    // eslint-disable-next-line no-unused-vars
+    const [ocrType, setOcrType] = useState(0)
+    // eslint-disable-next-line no-unused-vars
+    const [field_type, setFieldType] = useState(0)
+    // eslint-disable-next-line no-unused-vars
+    const [thresholdValue, setThresholdValue] = useState(0.5)
 
     useEffect(() => {
         let screenWidth = window.screen.availWidth;
@@ -256,6 +262,7 @@ function IdProcessor() {
         let w = x2 - x1
 
         let ocr_type = null
+
         let ocr_type_zero = ocr_type_template[0]
         let ocrt_type_one = ocr_type_template[1]
 
@@ -296,6 +303,44 @@ function IdProcessor() {
                 ...prevConfig[dictKey]
             }
         }))
+
+        let ocrTypeField = document.getElementById("ocrField")
+        let ocrTypeKey = null
+        if (ocrTypeField) {
+            ocrTypeKey = ocrTypeField.value
+        }
+        if (!ocrTypeKey) {
+            ocrTypeKey = ocr_type
+        }
+        else if (ocrTypeKey) {
+            setOcrType(ocrTypeKey)
+        }
+        else {
+            alert("Unidentified Problem!")
+            return
+        }
+        if (ocrTypeKey) {
+            ocr_type = ocrTypeKey
+        }
+
+        let fieldTypeElement = document.getElementById("fieldType")
+        let fieldTypeKey = null
+        if (fieldTypeElement) {
+            fieldTypeKey = fieldTypeElement.value
+        }
+        if (!fieldTypeKey) {
+            fieldTypeKey = fieldType
+        }
+        else if (fieldTypeKey) {
+            setFieldType(fieldTypeKey)
+        }
+        else {
+            alert("Unidentified Problem!")
+            return
+        }
+        if (fieldTypeKey) {
+            fieldType = fieldTypeKey
+        }
 
         let regexField = document.getElementById("regexField")
         let regexKey = ""
@@ -340,6 +385,8 @@ function IdProcessor() {
             alert("Unidentified Problem!")
             return
         }
+
+
 
         if (isKeyInList === false) {
             if (ocr_type === null) {
@@ -468,6 +515,8 @@ function IdProcessor() {
                     }))
                 }
             }
+
+
             setCounter(counter + 1)
         }
 
@@ -582,12 +631,64 @@ function IdProcessor() {
                     }
                 }
             }
+            closeAll()
         }
         else {
             alert("unidentified error!")
             return
         }
     };
+
+    const closeAll = () => {
+        const checkboxIds = [
+            "showFieldArea",
+            "showRegex",
+            "showMrz",
+            "showOcr",
+            "showFieldType",
+            "showThreshold",
+        ];
+
+        checkboxIds.forEach((id) => {
+            const checkbox = document.getElementById(id);
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+        });
+    };
+
+    const saveThreshold = () => {
+        let thresholdField = document.getElementById("threshold")
+        let threshold = null
+        if (thresholdField) {
+            threshold = thresholdField.value
+        }
+        if (threshold === null) {
+            threshold = 0.5
+        }
+        if (!threshold) {
+            threshold = 0.5
+        }
+        else if (threshold) {
+            setThresholdValue(threshold)
+        }
+        else {
+            alert("Unidentified Problem!")
+            return
+        }
+
+        let thresholdTemp
+        if (Number.isInteger(threshold)) {
+            thresholdTemp = parseInt(threshold)
+        }
+        else {
+            thresholdTemp = parseFloat(threshold)
+        }
+
+        if (threshold) {
+            configFields[dictKey]["threshold"] = thresholdTemp
+        }
+    }
 
     const clearCanvas = () => {
         const canvas = canvasRef.current;
@@ -694,6 +795,7 @@ function IdProcessor() {
         setSelectedKey(key === selectedKey ? "" : key);
 
 
+
         let keys = Object.keys(configFields[dictKey]["fields"]);
         let values = [];
 
@@ -751,6 +853,14 @@ function IdProcessor() {
             return
         }
         key = isoNumber + '_' + cardType + '_' + side
+
+        if (clickCounter === 0) {
+            setConfigFields((prevConfig) => ({
+                [key]: {
+                    ...prevConfig.iso_code
+                }
+            }))
+        }
 
         setDictKey(key);
         setClickCounter(clickCounter + 1);
@@ -902,6 +1012,7 @@ function IdProcessor() {
                                             selectedKey={selectedKey}
                                             handleCheckboxChange={handleCheckboxChange}
                                             addCheckbox={addCheckbox}
+                                            saveThreshold={saveThreshold}
                                         ></CheckboxField>
                                         <br />
                                     </div>
