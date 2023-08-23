@@ -4,6 +4,7 @@ import "../Styles/IdProcessor.css";
 
 const InfoSelector = (props) => {
 
+    // eslint-disable-next-line no-unused-vars
     const [isoNumber, setIsoNumber] = useState("");
     const [selectedCardType, setSelectedCardType] = useState("");
     const [selectedSide, setSelectedSide] = useState("");
@@ -23,11 +24,9 @@ const InfoSelector = (props) => {
                 <input
                     id="isoNumber"
                     name="isoNumber"
-                    type="number"
+                    type="text"
                     placeholder="ISO Number"
-                    //value={isoNumber}
                     onChange={(e) => setIsoNumber(e.target.value)}
-                    defaultValue="729"
                 />
                 &nbsp;&nbsp;&nbsp;&nbsp;
             </div>
@@ -49,14 +48,6 @@ const InfoSelector = (props) => {
                     ))}
                 </select>
                 &nbsp;&nbsp;
-
-                {selectedCardType === "passport" && (
-                    <div>
-                        <br />
-                        <label htmlFor="mrzInput">MRZ : </label>&nbsp;&nbsp;
-                        <input type="text" id="mrzInput" required placeholder="Enter MRZ" />
-                    </div>
-                )}
             </div>
             <br />
             <div>

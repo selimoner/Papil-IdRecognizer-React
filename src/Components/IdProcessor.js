@@ -49,12 +49,17 @@ function IdProcessor() {
     // eslint-disable-next-line no-unused-vars
     const [regex, setRegex] = useState("")
     // eslint-disable-next-line no-unused-vars
-    const [existingNames, setExistingNames] = useState({})
-    // eslint-disable-next-line no-unused-vars
     const [refImageURL, setRefImageURL] = useState(null);
     const [isGetRef, setIsGetRef] = useState(false)
-
+    const [isKeyInList, setKeyInList] = useState(false)
     let key = ""
+    const [keyValue, setValue] = useState(0)
+    // eslint-disable-next-line no-unused-vars
+    const [mrz, setMrz] = useState("")
+    const [getHeight, setHeight] = useState(0)
+    const [getWidth, setWidth] = useState(0)
+    const [isNoCropClicked, setNoCropClicked] = useState(false)
+    const [checker, setChecker] = useState(false)
 
     useEffect(() => {
         let screenWidth = window.screen.availWidth;
@@ -77,6 +82,8 @@ function IdProcessor() {
                 context.drawImage(image, 0, 0, canvas.width, canvas.height);
                 contextRef.current = context.getImageData(0, 0, canvas.width, canvas.height);
                 canvas.willReadFrequently = true;
+                setHeight(image.height)
+                setWidth(image.width)
             };
             image2.src = currentPhoto;
             image.src = currentPhoto;
@@ -90,6 +97,14 @@ function IdProcessor() {
         setSelectedKey(null)
         setIsCropped(false)
         setConfigFields(config)
+        setRectangleCoords(null);
+        setCardCoordinates(defaultFields);
+        setShowConfig(false)
+        setChecker(false)
+        setNoCropClicked(false)
+        key = ""
+        setDictKey("")
+        clearCanvas()
     }
 
     const handlePhotoChange = (e) => {
@@ -104,6 +119,7 @@ function IdProcessor() {
             reader.readAsDataURL(file);
             setSelectedKey(null);
             setCardCoordinates(defaultFields);
+            setConfigFields(config)
         } else {
             setCurrentPhoto(null);
         }
@@ -120,6 +136,12 @@ function IdProcessor() {
         setIsCropped(false)
         setConfigFields(config)
         setShowConfig(false)
+        setHeight(0)
+        setWidth(0)
+        setChecker(false)
+        setNoCropClicked(false)
+        key = ""
+        setDictKey("")
         clearCanvas()
     };
 
@@ -272,17 +294,209 @@ function IdProcessor() {
         setConfigFields((prevConfig) => ({
             [dictKey]: {
                 ...prevConfig[dictKey]
-
             }
         }))
 
-        if (rectangleCoords && selectedKey && handleButtonClick) {
-            /*setConfigFields((prevConfig) => ({
-                [dictKey]: {
-                    ...prevConfig[dictKey],
-                    fields: {
+        let regexField = document.getElementById("regexField")
+        let regexKey = ""
+        if (regexField) {
+            regexKey = regexField.value
+        }
+        if (regexKey === null) {
+            regexKey = ""
+        }
+        if (!regexKey) {
+            regexKey = ""
+        }
+        else if (typeof regexKey === "string" && regexKey.includes(" ")) {
+            alert("Regex value can not have space value!")
+        }
+        else if (regexKey) {
+            setRegex(regexKey)
+        }
+        else {
+            alert("Unidentified Problem!")
+            return
+        }
+
+        let mrzField = document.getElementById("mrzField")
+        let mrzKey = ""
+        if (mrzField) {
+            mrzKey = mrzField.value
+        }
+        if (mrzKey === null) {
+            mrzKey = ""
+        }
+        if (!mrzKey) {
+            mrzKey = ""
+        }
+        else if (typeof mrzKey === "string" && mrzKey.includes(" ")) {
+            alert("MRZ value can not have space value!")
+        }
+        else if (mrzKey) {
+            setMrz(mrzKey)
+        }
+        else {
+            alert("Unidentified Problem!")
+            return
+        }
+
+        if (isKeyInList === false) {
+            if (ocr_type === null) {
+                setConfigFields((prevConfig) => ({
+                    [dictKey]: {
                         ...prevConfig[dictKey],
-                        [counter]: {
+                        fields: {
+                            ...prevConfig[dictKey]["fields"],
+                            [counter]: {
+                                name: selectedKey,
+                                type: fieldType,
+                                points: {
+                                    x: x,
+                                    y: y,
+                                    h: h,
+                                    w: w
+                                },
+                            }
+                        }
+                    }
+                }))
+                if (regexKey && regexKey !== "") {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    ...prevConfig[dictKey]["fields"][counter],
+                                    regex: regexKey
+                                }
+                            }
+                        }
+                    }))
+                    if (mrzKey && mrzKey !== "") {
+                        setConfigFields((prevConfig) => ({
+                            [dictKey]: {
+                                ...prevConfig[dictKey],
+                                fields: {
+                                    ...prevConfig[dictKey]["fields"],
+                                    [counter]: {
+                                        ...prevConfig[dictKey]["fields"][counter],
+                                        mrz_type: mrzKey
+                                    }
+                                }
+                            }
+                        }))
+                    }
+                }
+                else if (mrzKey && mrzKey !== "") {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    ...prevConfig[dictKey]["fields"][counter],
+                                    mrz_type: mrzKey
+                                }
+                            }
+                        }
+                    }))
+                }
+            }
+
+            else {
+                setConfigFields((prevConfig) => ({
+                    [dictKey]: {
+                        ...prevConfig[dictKey],
+                        fields: {
+                            ...prevConfig[dictKey]["fields"],
+                            [counter]: {
+                                name: selectedKey,
+                                type: fieldType,
+                                points: {
+                                    x: x,
+                                    y: y,
+                                    h: h,
+                                    w: w
+                                },
+                                ocr_type: ocr_type
+                            }
+                        }
+                    }
+                }))
+                if (regexKey && regexKey !== "") {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    ...prevConfig[dictKey]["fields"][counter],
+                                    regex: regexKey
+                                }
+                            }
+                        }
+                    }))
+                    if (mrzKey && mrzKey !== "") {
+                        setConfigFields((prevConfig) => ({
+                            [dictKey]: {
+                                ...prevConfig[dictKey],
+                                fields: {
+                                    ...prevConfig[dictKey]["fields"],
+                                    [counter]: {
+                                        ...prevConfig[dictKey]["fields"][counter],
+                                        mrz_type: mrzKey
+                                    }
+                                }
+                            }
+                        }))
+                    }
+                }
+                else if (mrzKey && mrzKey !== "") {
+                    setConfigFields((prevConfig) => ({
+                        [dictKey]: {
+                            ...prevConfig[dictKey],
+                            fields: {
+                                ...prevConfig[dictKey]["fields"],
+                                [counter]: {
+                                    ...prevConfig[dictKey]["fields"][counter],
+                                    mrz_type: mrzKey
+                                }
+                            }
+                        }
+                    }))
+                }
+            }
+            setCounter(counter + 1)
+        }
+
+        else if (isKeyInList === true) {
+            if (ocr_type === null) {
+                configFields[dictKey]["fields"][keyValue] = {
+                    name: selectedKey,
+                    type: fieldType,
+                    points: {
+                        x: x,
+                        y: y,
+                        h: h,
+                        w: w
+                    }
+                }
+                if (regexKey && regexKey !== "") {
+                    configFields[dictKey]["fields"][keyValue] = {
+                        name: selectedKey,
+                        type: fieldType,
+                        points: {
+                            x: x,
+                            y: y,
+                            h: h,
+                            w: w
+                        },
+                        regex: regexKey
+                    }
+                    if (mrzKey && mrzKey !== "") {
+                        configFields[dictKey]["fields"][keyValue] = {
                             name: selectedKey,
                             type: fieldType,
                             points: {
@@ -290,144 +504,88 @@ function IdProcessor() {
                                 y: y,
                                 h: h,
                                 w: w
-                            }
+                            },
+                            regex: regexKey,
+                            mrz_type: mrzKey
                         }
                     }
                 }
-            }))*/
+                else if (mrzKey && mrzKey !== "") {
+                    configFields[dictKey]["fields"][keyValue] = {
+                        name: selectedKey,
+                        type: fieldType,
+                        points: {
+                            x: x,
+                            y: y,
+                            h: h,
+                            w: w
+                        },
+                        mrz_type: mrzKey
+                    }
+                }
 
-            if (!(selectedKey in existingNames)) {
-                if (ocr_type === null) {
-                    setConfigFields((prevConfig) => ({
-                        [dictKey]: {
-                            ...prevConfig[dictKey],
-                            fields: {
-                                ...prevConfig[dictKey]["fields"],
-                                [counter]: {
-                                    name: selectedKey,
-                                    type: fieldType,
-                                    points: {
-                                        x: x,
-                                        y: y,
-                                        h: h,
-                                        w: w
-                                    },
-                                }
-                            }
-                        }
-                    }))
-                    setCounter(counter + 1)
-                }
-                else {
-                    setConfigFields((prevConfig) => ({
-                        [dictKey]: {
-                            ...prevConfig[dictKey],
-                            fields: {
-                                ...prevConfig[dictKey]["fields"],
-                                [counter]: {
-                                    name: selectedKey,
-                                    type: fieldType,
-                                    points: {
-                                        x: x,
-                                        y: y,
-                                        h: h,
-                                        w: w
-                                    },
-                                    ocr_type: ocr_type
-                                }
-                            }
-                        }
-                    }))
-                    setCounter(counter + 1)
-                }
-            }
-
-            else if (selectedKey in existingNames) {
-                if (ocr_type === null) {
-                    setConfigFields((prevConfig) => ({
-                        [dictKey]: {
-                            ...prevConfig[dictKey],
-                            fields: {
-                                ...prevConfig[dictKey]["fields"],
-                                [counter]: {
-                                    name: selectedKey,
-                                    type: fieldType,
-                                    points: {
-                                        x: x,
-                                        y: y,
-                                        h: h,
-                                        w: w
-                                    },
-                                }
-                            }
-                        }
-                    }))
-                    setCounter(counter + 1)
-                }
-                else {
-                    setConfigFields((prevConfig) => ({
-                        [dictKey]: {
-                            ...prevConfig[dictKey],
-                            fields: {
-                                ...prevConfig[dictKey]["fields"],
-                                [counter]: {
-                                    name: selectedKey,
-                                    type: fieldType,
-                                    points: {
-                                        x: x,
-                                        y: y,
-                                        h: h,
-                                        w: w
-                                    },
-                                    ocr_type: ocr_type
-                                }
-                            }
-                        }
-                    }))
-                    setCounter(counter + 1)
-                }
             }
             else {
-                alert("unidentified error!")
-                return
-            }
+                configFields[dictKey]["fields"][keyValue] = {
+                    name: selectedKey,
+                    type: fieldType,
+                    points: {
+                        x: x,
+                        y: y,
+                        h: h,
+                        w: w
+                    },
+                    ocr_type: ocr_type
+                }
 
-            let regexField = document.getElementById("regexField")
-            let regexKey = ""
-            if (regexField) {
-                regexKey = regexField.value
-            }
-            if (regexKey === null) {
-                regexKey = ""
-            }
-            if (!regexKey) {
-                regexKey = ""
-            }
-            else if (typeof regexKey === "string" && regexKey.includes(" ")) {
-                alert("Regex value can not have space value!")
-            }
-            else if (regexKey) {
-                setRegex(regexKey)
-            }
-            else {
-                alert("Unidentified Problem!")
-                return
-            }
-
-            if (regexKey) {
-                setConfigFields((prevConfig) => ({
-                    [dictKey]: {
-                        ...prevConfig[dictKey],
-                        fields: {
-                            ...prevConfig[dictKey]["fields"],
-                            [counter]: {
-                                ...prevConfig[dictKey]["fields"][counter],
-                                regex: regexKey
-                            }
+                if (regexKey && regexKey !== "") {
+                    configFields[dictKey]["fields"][keyValue] = {
+                        name: selectedKey,
+                        type: fieldType,
+                        points: {
+                            x: x,
+                            y: y,
+                            h: h,
+                            w: w
+                        },
+                        ocr_type: ocr_type,
+                        regex: regexKey
+                    }
+                    if (mrzKey && mrzKey !== "") {
+                        configFields[dictKey]["fields"][keyValue] = {
+                            name: selectedKey,
+                            type: fieldType,
+                            points: {
+                                x: x,
+                                y: y,
+                                h: h,
+                                w: w
+                            },
+                            ocr_type: ocr_type,
+                            regex: regexKey,
+                            mrz_type: mrzKey
                         }
                     }
-                }))
+                }
+                if (mrzKey && mrzKey !== "") {
+                    configFields[dictKey]["fields"][keyValue] = {
+                        name: selectedKey,
+                        type: fieldType,
+                        points: {
+                            x: x,
+                            y: y,
+                            h: h,
+                            w: w
+                        },
+                        ocr_type: ocr_type,
+                        mrz_type: mrzKey
+                    }
+                }
             }
+        }
+        else {
+            alert("unidentified error!")
+            return
         }
     };
 
@@ -491,6 +649,9 @@ function IdProcessor() {
         clearCanvas();
         setRectangleCoords(null);
         setIsSetCropped(false)
+        if (isNoCropClicked) {
+            setIsSetCropped(true)
+        }
     };
 
     const handleSetCropped = () => {
@@ -512,6 +673,7 @@ function IdProcessor() {
             setIsSetCropped(false)
             setIsGetRef(true);
             setShowConfig(true)
+            setChecker(true)
 
             var dataurl = croppedImageURL
 
@@ -530,6 +692,24 @@ function IdProcessor() {
 
     const handleCheckboxChange = (key) => {
         setSelectedKey(key === selectedKey ? "" : key);
+
+
+        let keys = Object.keys(configFields[dictKey]["fields"]);
+        let values = [];
+
+        for (let i = 0; i < keys.length; i++) {
+            values.push(configFields[dictKey]["fields"][keys[i]]["name"]);
+        }
+
+        for (let data in values) {
+            if (values[data] === key) {
+                setKeyInList(true)
+                setValue(data)
+                break;
+            } else {
+                setKeyInList(false)
+            }
+        }
     };
 
     const handleButtonClick = () => {
@@ -570,33 +750,20 @@ function IdProcessor() {
             setSelectedKey(null)
             return
         }
-        if (cardType === "passport") {
-            let mrzField = document.getElementById("mrzInput").value;
-            if (!mrzField) {
-                alert("Please fill the MRZ Field!");
-                setInfoSaved(false);
-                setSelectedKey(null);
-            }
-        }
         key = isoNumber + '_' + cardType + '_' + side
 
         setDictKey(key);
-        if (clickCounter === 0) {
-            setConfigFields((prevConfig) => ({
-                [key]: {
-                    ...prevConfig.iso_code
-                }
-            }))
-        }
         setClickCounter(clickCounter + 1);
         setInfoSaved(true)
-        setIsSetCropped(true)
+        setIsSetCropped(false)
         setShowConfig(true)
     }
 
     const noCropping = () => {
         setIsCropped(true);
-        setIsSetCropped(true)
+        configFields["iso_code"]["initial"]["h"] = getHeight
+        configFields["iso_code"]["initial"]["w"] = getWidth
+        setNoCropClicked(true)
     }
 
     const getRef = () => {
@@ -678,6 +845,8 @@ function IdProcessor() {
                         handleClearClick={handleClearClick}
                         currentPhoto={currentPhoto}
                         noCropping={noCropping}
+                        checker={checker}
+                        isNoCropClicked={isNoCropClicked}
                     ></FileInput>
                 </div>
                 <br />
@@ -726,10 +895,6 @@ function IdProcessor() {
                         </div>
                         {isShowConfig && (
                             <div className="rightSide">
-                                <ShowConfig
-                                    isShowConfig={isShowConfig}
-                                    config={configFields}
-                                ></ShowConfig>
                                 {isInfoSaved && (
                                     <div>
                                         <CheckboxField
@@ -741,6 +906,11 @@ function IdProcessor() {
                                         <br />
                                     </div>
                                 )}
+                                <ShowConfig
+                                    isShowConfig={isShowConfig}
+                                    config={configFields}
+                                ></ShowConfig>
+
                             </div>
                         )}
 

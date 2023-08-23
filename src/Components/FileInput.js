@@ -8,6 +8,8 @@ const FileInput = (props) => {
     const handleClearClick = props.handleClearClick
     const currentPhoto = props.currentPhoto
     const noCropping = props.noCropping
+    const checker = props.checker
+    const isNoCropClicked = props.isNoCropClicked
 
     return (
         <div className="col-sm" id="left-side">
@@ -24,7 +26,10 @@ const FileInput = (props) => {
                         Clear
                     </button>
                     &nbsp;&nbsp;
-                    <button className="btn btn-success mt-1" onClick={noCropping}>No Need Crop</button>
+                    {!checker && !isNoCropClicked && (
+                        <button className="btn btn-success mt-1" onClick={noCropping}>No Need Crop</button>
+                    )}
+
                     <br />
                 </div>
             )}

@@ -7,9 +7,14 @@ const CheckboxField = (props) => {
     const handleCheckboxChange = props.handleCheckboxChange;
     const addCheckbox = props.addCheckbox;
     const [showRegex, setShowRegex] = useState(false);
+    const [showMrz, setShowMrz] = useState(false);
 
     const handleRegexCheckboxChange = (event) => {
         setShowRegex(event.target.checked);
+    };
+
+    const handleMrzCheckboxChange = (event) => {
+        setShowMrz(event.target.checked);
     };
 
     return (
@@ -60,7 +65,33 @@ const CheckboxField = (props) => {
                         />&nbsp;&nbsp;
                     </div>
                 )}
+
             </div>
+            <div>
+                <br />
+                <label className="form-check-label" htmlFor="showMrz">
+                    Mrz :
+                </label>&nbsp;&nbsp;
+                <input
+                    type="checkbox"
+                    id="showMrz"
+                    onChange={handleMrzCheckboxChange}
+                />
+                {showMrz && (
+                    <div>
+                        <label className="form-check-label" htmlFor="mrzField">
+                            Enter Mrz Type :
+                        </label>&nbsp;&nbsp;
+                        <input
+                            type="text"
+                            id="mrzField"
+                            required
+                            placeholder="Enter Mrz"
+                        />&nbsp;&nbsp;
+                    </div>
+                )}
+            </div>
+
             <br />
         </div>
     );
