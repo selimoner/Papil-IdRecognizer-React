@@ -874,6 +874,7 @@ function IdProcessor() {
         setInfoSaved(true)
         setIsSetCropped(true)
         setShowConfig(true)
+        setIsGetRef(true)
     }
 
     const noCropping = () => {
