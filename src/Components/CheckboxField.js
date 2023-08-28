@@ -60,7 +60,7 @@ const CheckboxField = (props) => {
             <div>
                 <br />
                 <label className="form-check-label" htmlFor="showFieldArea">
-                    Field Area
+                    Add Field :
                 </label>&nbsp;&nbsp;
                 <input
                     type="checkbox"

@@ -66,6 +66,7 @@ function IdProcessor() {
     const [field_type, setFieldType] = useState(0)
     // eslint-disable-next-line no-unused-vars
     const [thresholdValue, setThresholdValue] = useState(0.5)
+    const defaultRegex = "(.+\\s?){1,}"
 
     useEffect(() => {
         let screenWidth = window.screen.availWidth;
@@ -363,6 +364,9 @@ function IdProcessor() {
             alert("Unidentified Problem!")
             return
         }
+        if (fieldType === 0) {
+            regexKey = defaultRegex
+        }
 
         let mrzField = document.getElementById("mrzField")
         let mrzKey = ""
@@ -385,8 +389,6 @@ function IdProcessor() {
             alert("Unidentified Problem!")
             return
         }
-
-
 
         if (isKeyInList === false) {
             if (ocr_type === null) {
@@ -870,7 +872,7 @@ function IdProcessor() {
         setDictKey(key);
         setClickCounter(clickCounter + 1);
         setInfoSaved(true)
-        setIsSetCropped(false)
+        setIsSetCropped(true)
         setShowConfig(true)
     }
 
@@ -990,8 +992,8 @@ function IdProcessor() {
     }
 
     return (
-        <div className="container">
-            <div id="photo-uploader" >
+        <div className="">
+            <div id="" >
                 <div id="fileInput">
                     <FileInput
                         handlePhotoChange={handlePhotoChange}

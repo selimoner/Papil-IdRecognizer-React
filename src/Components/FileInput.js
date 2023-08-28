@@ -13,13 +13,14 @@ const FileInput = (props) => {
 
     return (
         <div className="col-sm" id="left-side">
-            <input
-                type="file"
-                accept=".png, .jpeg, .jpg"
-                onChange={handlePhotoChange}
-                ref={fileInputRef}
-                disabled={isPhotoUploaded}
-            />
+            <label for="images" class="drop-container" id="dropcontainer">
+                <span class="drop-title">Drop files here</span>
+                or
+                <input type="file" id="images" required accept=".png, .jpeg, .jpg"
+                    onChange={handlePhotoChange}
+                    ref={fileInputRef}
+                    disabled={isPhotoUploaded} />
+            </label>
             {currentPhoto && (
                 <div className="uploaded-photo">
                     <button className="btn btn-danger mt-1" onClick={handleClearClick}>
